@@ -17,9 +17,11 @@ mitad = (0.5 V.*)
 
 --interpreta el operador de rotacion
 interp_rotar :: ImagenFlotante -> ImagenFlotante
+interp_rotar p a b c =  p (a V.+ b) b (mulSV (-1) c) 
 
 --interpreta el operador de espejar
 interp_espejar :: ImagenFlotante -> ImagenFlotante
+interp_espejar p a b c = p (a V.+ b) (mulSV (-1) b) c
 
 --interpreta el operador de rotacion 45
 interp_rotar45 :: ImagenFlotante -> ImagenFlotante

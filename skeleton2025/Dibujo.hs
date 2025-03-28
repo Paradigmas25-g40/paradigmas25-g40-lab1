@@ -27,6 +27,9 @@ r270 a = comp (Rotar45) 6 a
 r90 :: Dibujo a -> Dibujo a
 r90 a = comp (Rotar45) 2 a
 
+r360 :: Dibujo a -> Dibujo a
+r360 a = comp (Rotar) 4 a
+
 -- Pone una figura sobre la otra, ambas ocupan el mismo espacio.
 (.-.) :: Dibujo a -> Dibujo a -> Dibujo a
 (.-.) a b = Apilar 1 1 a b
@@ -95,6 +98,4 @@ foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima (Espejar a) = f
 foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima (Apilar x y a b) = fApilar x y (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima a) (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima b)
 foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima (Juntar x y a b) = fJuntar x y (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima a) (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima b)
 foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima (Encima a b) = fEncima (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima a) (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima b)
-
-
 
