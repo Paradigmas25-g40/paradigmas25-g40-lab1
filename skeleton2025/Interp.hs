@@ -25,6 +25,7 @@ interp_espejar p a b c = p (a V.+ b) (mulSV (-1) b) c
 
 --interpreta el operador de rotacion 45
 interp_rotar45 :: ImagenFlotante -> ImagenFlotante
+interp_rotar45 p a b c = p (a V.+ mitad(b V.+ c)) mitad(b V.+ c) mitad(b V.- c)
 
 --interpreta el operador de apilar
 interp_apilar :: Int -> Int -> ImagenFlotante -> ImagenFlotante -> ImagenFlotante
@@ -34,6 +35,7 @@ interp_juntar :: Int -> Int -> ImagenFlotante -> ImagenFlotante -> ImagenFlotant
 
 --interpreta el operador de encimar
 interp_encimar :: ImagenFlotante -> ImagenFlotante -> ImagenFlotante
+
 
 --interpreta cualquier expresion del tipo Dibujo a
 --utilizar foldDib 
