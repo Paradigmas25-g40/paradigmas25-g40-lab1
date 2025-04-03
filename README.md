@@ -13,10 +13,10 @@
 
 ## Checklist de Proyecto
 
-- [x ] 1. Definir el tipo principal para hacer Dibujos, y funciones / Polimorfismo.
-- [ x] 2. Exportar las Funciones Constructoras.
-- [ x] 3. .Definir los Combinadores
-- [x ] 4. Definir funciones de alto orden.
+- [x] 1. Definir el tipo principal para hacer Dibujos, y funciones / Polimorfismo.
+- [x] 2. Exportar las Funciones Constructoras.
+- [x] 3. .Definir los Combinadores
+- [x] 4. Definir funciones de alto orden.
 - [ ] 5. definir las funciones del archivo Pred.hs
 - [ ] 6. 2b?, Semántica del lenguaje
 ### ✦✦✦ Puntos estrella!!! ✦✦✦
