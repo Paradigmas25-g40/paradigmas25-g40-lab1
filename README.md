@@ -13,16 +13,16 @@
 
 ## Checklist de Proyecto
 
-- [ ] 1. Definir el tipo principal para hacer Dibujos, y funciones / Polimorfismo.
-- [ ] 2. Exportar las Funciones Constructoras.
-- [ ] 3. .Definir los Combinadores
-- [ ] 4. Definir funciones de alto orden.
+- [x ] 1. Definir el tipo principal para hacer Dibujos, y funciones / Polimorfismo.
+- [ x] 2. Exportar las Funciones Constructoras.
+- [ x] 3. .Definir los Combinadores
+- [x ] 4. Definir funciones de alto orden.
 - [ ] 5. definir las funciones del archivo Pred.hs
 - [ ] 6. 2b?, Semántica del lenguaje
 ### ✦✦✦ Puntos estrella!!! ✦✦✦
 - [ ] 7. Hacen un dibujo interesante, como una imagen fractal, un dibujo de escher.
 - [ ] 8. Extienden el lenguaje para expresar animaciones de dibujos. 
-- [ ] 9. Agregan al lenguaje un operador para permitir modificar las dimensiones de un dibujo (u otras transformaciones, por ejemplo, rotar α grados).Entrega
+- [ ] 9. Agregan al lenguaje un operador para permitir modificar las dimensiones de un dibujo (u otras transformaciones, por ejemplo, rotar α grados).
 
 
 ## Notas Adicionales / Conceptos a evaluar
@@ -33,4 +33,4 @@
 - Que no haya errores de runtime; por ejemplo, por hacer: head [] .
 - Marcar las casillas a medida que se completen las tareas.
 
-*DEADLINE: V(11/04) *
+*DEADLINE: V(11/04)*
