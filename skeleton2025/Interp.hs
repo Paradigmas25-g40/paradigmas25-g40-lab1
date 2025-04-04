@@ -1,4 +1,3 @@
--- Sacar del esqueleto final!
 module Interp where
 import Graphics.Gloss
 import Graphics.Gloss.Data.Vector
@@ -13,6 +12,12 @@ type Interpretacion a = a -> ImagenFlotante
 mitad :: Vector -> Vector
 mitad = (0.5 V.*)
 
+ejemplo :: ImagenFlotante
+ejemplo a b c = Polygon [a, b, c]
+
+ejemplo2 :: ImagenFlotante
+ejemplo2 a b c = Polygon [a, b, c]
+
 -- Interpretaciones de los constructores de Dibujo
 
 --interpreta el operador de rotacion
@@ -25,7 +30,7 @@ interp_espejar p a b c = p (a V.+ b) (mulSV (-1) b) c
 
 --interpreta el operador de rotacion 45
 interp_rotar45 :: ImagenFlotante -> ImagenFlotante
-interp_rotar45 p a b c = p (a V.+ mitad(b V.+ c)) mitad(b V.+ c) mitad(b V.- c)
+interp_rotar45 p a b c = p (a V.+ mitad(b V.+ c)) (mitad(b V.+ c)) (mitad(b V.- c))
 
 -- interp_apilar y interp_juntar  siguen la misma logica; dividir el espacio en partes proporcionales
 --voy a definir una funcion auxiliar para dividir el espacio en partes proporcionales, asi queda mas conciso
@@ -48,10 +53,9 @@ interp_juntar n m p1 p2 a b c =
   
 -- 2-DO agregar comentarios para que sea mas legible para el ojo humano
 
-
 --interpreta el operador de encimar
 interp_encimar :: ImagenFlotante -> ImagenFlotante -> ImagenFlotante
--- 2-DO @auwugusto
+interp_encimar p1 p2 a b c = Pictures [p1 a b c, p2 a b c]
 
 --interpreta cualquier expresion del tipo Dibujo a
 --utilizar foldDib
