@@ -6,6 +6,7 @@ import Dibujo
 import Interp
 import qualified Basica.Ejemplo as E
 import qualified Graphics.Gloss.Data.Point.Arithmetic as V
+--import qualified Basica.Escher as E
 
 --Funciones para rellenar el fondo de la imagen inicial
 
