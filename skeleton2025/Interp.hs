@@ -12,19 +12,34 @@ type Interpretacion a = a -> ImagenFlotante
 mitad :: Vector -> Vector
 mitad = (0.5 V.*)
 
+  
 -- Interpretaciones de los constructores de Dibujo
 
 --interpreta el operador de rotacion
 interp_rotar :: ImagenFlotante -> ImagenFlotante
-interp_rotar p a b c =  p (a V.+ b) b (mulSV (-1) c) 
+--interp_rotar p a b c = p (a V.+ b) c (V.negate b)
+interp_rotar p a b c =  p (a V.+ b) c (mulSV (-1) b)
 
 --interpreta el operador de espejar
 interp_espejar :: ImagenFlotante -> ImagenFlotante
 interp_espejar p a b c = p (a V.+ b) (mulSV (-1) b) c
 
 --interpreta el operador de rotacion 45
+          --rotar45 :: Vector -> Vector
+          --rotar45 (x, y) =
+          --  let raiz2 = sqrt 2
+          --  in ((x - y) / raiz2, (x + y) / raiz2)
 interp_rotar45 :: ImagenFlotante -> ImagenFlotante
 interp_rotar45 p a b c = p (a V.+ mitad(b V.+ c)) (mitad(b V.+ c)) (mitad(b V.- c))
+--interp_rotar45 p a b c =
+--  let r = sqrt 2 / 2
+--      rotar45 (x, y) = ((x - y) * r, (x + y) * r)
+--      b' = rotar45 b
+--      c' = rotar45 c
+--      centroOriginal = a V.+ mitad b V.+ mitad c
+--      centroNuevo = mitad b' V.+ mitad c'
+--      nuevoOrigen = centroOriginal V.- centroNuevo
+--  in p nuevoOrigen b' c'
 
 -- interp_apilar y interp_juntar  siguen la misma logica; dividir el espacio en partes proporcionales
 --voy a definir una funcion auxiliar para dividir el espacio en partes proporcionales, asi queda mas conciso
@@ -34,24 +49,29 @@ dividirEspacio n m v =
       v1 = (n / total) V.* v
       v2 = (m / total) V.* v
   in (v1, v2)
+
 --interpreta el operador de apilar
 interp_apilar :: Float -> Float -> ImagenFlotante -> ImagenFlotante -> ImagenFlotante
 interp_apilar n m p1 p2 a b c =
   let (h1, h2) = dividirEspacio n m c
   in Pictures [p1 a b h1, p2 (a V.+ h1) b h2]
+--interp_apilar n m p1 p2 a b c =
+--  let (h1, h2) = dividirEspacio n m c
+--  in Pictures [ p1 (a V.+ h2) b h1, p2 a b h2]
+
+
 --interpreta el operador de juntar
 interp_juntar :: Float -> Float -> ImagenFlotante -> ImagenFlotante -> ImagenFlotante
 interp_juntar n m p1 p2 a b c =
   let (w1, w2) = dividirEspacio n m b
   in Pictures [p1 a w1 c, p2 (a V.+ w1) w2 c]
 
---interpreta el operador de encimar
+
+--interpreta el operador de encimar 
 interp_encimar :: ImagenFlotante -> ImagenFlotante -> ImagenFlotante
 interp_encimar p1 p2 a b c = Pictures [p1 a b c, p2 a b c]
 
 --interpreta cualquier expresion del tipo Dibujo a
 --utilizar foldDib
--- 2-DO @auwugusto
---interp :: (a -> (vector->vector->vector)) -> Dibujo a -> ((vector)->(vector)->(vector))
 interp :: Interpretacion a -> Dibujo a -> ImagenFlotante
 interp p = foldDib p interp_rotar interp_rotar45 interp_espejar interp_apilar interp_juntar interp_encimar

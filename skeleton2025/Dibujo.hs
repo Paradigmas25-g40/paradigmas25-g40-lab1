@@ -14,18 +14,18 @@ data Dibujo a = Basica a
 comp :: (a -> a) -> Int -> a -> a
 comp f 0 a = a
 comp f 1 a = (f a)
-comp f x a | x > 1 = comp f (x-1) a
+comp f x a | x > 1 = f (comp f (x-1) a)
        |x < 0 = error "No es posible componer negativamente."
 
 -- Rotaciones de múltiplos de 90.
 r180 :: Dibujo a -> Dibujo a
-r180 a = comp (Rotar45) 4 a
+r180 a = comp (Rotar) 2 a
 
 r270 :: Dibujo a -> Dibujo a
-r270 a = comp (Rotar45) 6 a
+r270 a = comp (Rotar) 3 a
 
 r90 :: Dibujo a -> Dibujo a
-r90 a = comp (Rotar45) 2 a
+r90 a = Rotar a
 
 r360 :: Dibujo a -> Dibujo a
 r360 a = comp (Rotar) 4 a
@@ -37,6 +37,7 @@ r360 a = comp (Rotar) 4 a
 -- Pone una figura al lado de la otra, ambas ocupan el mismo espacio.
 (///) :: Dibujo a -> Dibujo a -> Dibujo a
 (///) a b = Juntar 1 1 a b
+
 -- Superpone una figura con otra.
 (^^^) :: Dibujo a -> Dibujo a -> Dibujo a
 (^^^) a b = Encima a b
@@ -44,7 +45,7 @@ r360 a = comp (Rotar) 4 a
 
 -- Dadas cuatro dibujos las ubica en los cuatro cuadrantes.
 cuarteto :: Dibujo a -> Dibujo a -> Dibujo a -> Dibujo a -> Dibujo a
-cuarteto a b c d = (.-.) ((^^^) a b) ((^^^) c d)
+cuarteto a b c d = (.-.) ((///) a b) ((///) c d)
 
 -- Un dibujo repetido con las cuatro rotaciones, superpuestas.
 
@@ -54,7 +55,7 @@ encimar4 a = (^^^) (r270 a) $ (^^^) (r180 a) $ (^^^) (r90 a) a
 -- Cuadrado con la misma figura rotada i * 90, para i ∈ {0, ..., 3}.
 -- No confundir con encimar4!
 ciclar :: Dibujo a -> Dibujo a
-ciclar a = (.-.) ((///) a (Rotar a)) ((///) (r180 a) (r270 a))
+ciclar a = (.-.) ((///) a (Rotar a)) ((///) (r270 a) (r180 a))
 
 -- Transfomar un valor de tipo a como una Basica.
 pureDib :: a -> Dibujo a
@@ -98,4 +99,3 @@ foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima (Espejar a) = f
 foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima (Apilar x y a b) = fApilar x y (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima a) (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima b)
 foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima (Juntar x y a b) = fJuntar x y (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima a) (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima b)
 foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima (Encima a b) = fEncima (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima a) (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima b)
-
