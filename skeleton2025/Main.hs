@@ -4,9 +4,10 @@ import Graphics.Gloss.Interface.IO.Display
 import Graphics.UI.GLUT.Begin
 import Dibujo
 import Interp
-import qualified Basica.Ejemplo as E
+import qualified Basica.Ejemplo as Basica
+import qualified Basica.Escher as Escher
+import qualified Basica.BasicaDoble as BasicaDoble
 import qualified Graphics.Gloss.Data.Point.Arithmetic as V
---import qualified Basica.Escher as E
 
 --Funciones para rellenar el fondo de la imagen inicial
 
@@ -32,9 +33,25 @@ data Conf a = Conf {
   , r :: Picture -> Picture  -- Reposicionar figura
   }
 
+ejescher ancho alto = Conf {
+                basic = Escher.interpBas
+              , fig = Escher.escher 3 Escher.Fish
+              , width = ancho
+              , height = alto
+              , r = id
+              }
+
+ejbasicadoble ancho alto = Conf {
+                basic = BasicaDoble.interpBas
+              , fig = BasicaDoble.ejemplo
+              , width = ancho
+              , height = alto
+              , r = id
+              }
+
 ej ancho alto = Conf {
-                basic = E.interpBas
-              , fig = E.ejemplo
+                basic = Basica.interpBas
+              , fig = Basica.ejemplo
               , width = ancho
               , height = alto
               , r = id
@@ -44,8 +61,24 @@ moverCentro :: Float -> Float -> Picture -> Picture
 moverCentro ancho alto p = translate (-ancho / 2) (-alto / 2) p
 
 ejCentro ancho alto = Conf {
-                basic = E.interpBas
-              , fig = E.ejemplo
+                basic = Escher.interpBas
+              , fig = Escher.escher 3 Escher.Fish
+              , width = ancho
+              , height = alto
+              , r = moverCentro ancho alto
+              }
+
+ejCentroBasicaDoble ancho alto = Conf {
+                basic = BasicaDoble.interpBas
+              , fig = BasicaDoble.ejemplo
+              , width = ancho
+              , height = alto
+              , r = moverCentro ancho alto
+              }
+
+ejCentroBasica ancho alto = Conf {
+                basic = Basica.interpBas
+              , fig = Basica.ejemplo
               , width = ancho
               , height = alto
               , r = moverCentro ancho alto
@@ -55,7 +88,7 @@ ejCentro ancho alto = Conf {
 -- pantalla la figura de la misma de acuerdo a la interpretación para
 -- las figuras básicas. Permitimos una computación para poder leer
 -- archivos, tomar argumentos, etc.
-inicial :: IO (Conf E.Basica) -> IO ()
+inicial :: IO (Conf Escher.Escher) -> IO ()
 inicial cf = cf >>= \cfg ->
     let ancho  = (width cfg, 0)
         alto  = (0, height cfg)
@@ -65,5 +98,27 @@ inicial cf = cf >>= \cfg ->
         withGrid p = pictures [p, grillaGris]
         grey = makeColorI 120 120 120 120
 
+inicial2 :: IO (Conf BasicaDoble.Basica) -> IO ()
+inicial2 cf = cf >>= \cfg ->
+    let ancho  = (width cfg, 0)
+        alto  = (0, height cfg)
+        imagen = interp (basic cfg) (fig cfg) (0, 0) ancho alto
+    in display win white . withGrid $ imagen
+  where grillaGris = color grey $ grilla 10 (0, 0) 100 10
+        withGrid p = pictures [p, grillaGris]
+        grey = makeColorI 120 120 120 120
+
+inicial3 :: IO (Conf Basica.Basica) -> IO ()
+inicial3 cf = cf >>= \cfg ->
+    let ancho  = (width cfg, 0)
+        alto  = (0, height cfg)
+        imagen = interp (basic cfg) (fig cfg) (0, 0) ancho alto
+    in display win white . withGrid $ imagen
+  where grillaGris = color grey $ grilla 10 (0, 0) 100 10
+        withGrid p = pictures [p, grillaGris]
+        grey = makeColorI 120 120 120 120
+
 win = InWindow "Paradigmas 2025 - Lab1" (500, 500) (0, 0)
-main = inicial $ return (ej 100 100)
+main = inicial $ return (ejescher 100 100)
+main2 = inicial2 $ return (ejbasicadoble 100 100)
+main3 = inicial3 $ return (ej 100 100)

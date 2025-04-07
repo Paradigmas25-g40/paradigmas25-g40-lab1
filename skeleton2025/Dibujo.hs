@@ -13,8 +13,8 @@ data Dibujo a = Basica a
 -- Composición n-veces de una función con sí misma.
 comp :: (a -> a) -> Int -> a -> a
 comp f 0 a = a
-comp f 1 a = (f a)
-comp f x a | x > 1 = f (comp f (x-1) a)
+comp f x a 
+       | x > 0 = comp f (x-1) (f a)
        |x < 0 = error "No es posible componer negativamente."
 
 -- Rotaciones de múltiplos de 90.
