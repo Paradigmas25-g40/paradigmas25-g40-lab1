@@ -70,6 +70,7 @@ esFlip2 =  (>= 2) . foldDib (const 0) fRotar fRotar45 fEspejar fApilar fJuntar f
 
 
 data Superfluo = RotacionSuperflua | FlipSuperfluo
+    deriving (Show, Eq)
 
 ---- Chequea si el dibujo tiene una rotacion superflua
 errorRotacion :: Dibujo a -> [Superfluo]
@@ -96,6 +97,26 @@ errorRotacion d = snd (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar 
 
 -- Chequea si el dibujo tiene un flip superfluo
 errorFlip :: Dibujo a -> [Superfluo]
+-- Se usa foldDib para recorrer el dibujo y analizar cada constructor del lenguaje.
+-- Usamos snd para quedarnos con la lista de errores, el resultado de flodDib es (Bool,[Superfluo])
+errorFlip d = snd (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima d)
+  where
+    fBasica _ = (0, [])
+
+    -- Reinicia el contador de espejados, pero conserva errores
+    fRotar (_, errs) = (0, errs)
+    fRotar45 (_, errs)= (0, errs)
+
+    fEspejar (n, errs) =
+      let n' = n + 1
+          nuevoErr = if n' == 2 then [FlipSuperfluo] else []    -- Si n' es el segundo "Espejar" implica FlipSuperfluo
+          nFinal = if n' == 2 then 0 else n'                    -- Se reinicia el contador si ya habia dos "Espejar".
+      in (nFinal, errs ++ nuevoErr)                             -- Devolvemos el nuevo contador nFinal y los errores acumulados.
+    
+    --Combina errores de dos ramas, reinicia contador
+    fApilar _ _ (_, e1) (_, e2)= (0, e1 ++ e2)
+    fJuntar _ _ (_, e1) (_, e2)= (0, e1 ++ e2)
+    fEncima (_, e1) (_, e2)= (0, e1 ++ e2)
 
 -- Aplica todos los chequeos y acumula todos los errores, y
 -- sólo devuelve la figura si no hubo ningún error.
