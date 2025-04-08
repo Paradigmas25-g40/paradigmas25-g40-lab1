@@ -8,6 +8,7 @@ import qualified Basica.Ejemplo as Basica
 import qualified Basica.Escher as Escher
 import qualified Basica.BasicaDoble as BasicaDoble
 import qualified Graphics.Gloss.Data.Point.Arithmetic as V
+--import qualified Basica.BasicaDoble as Escher
 
 --Funciones para rellenar el fondo de la imagen inicial
 
@@ -35,7 +36,7 @@ data Conf a = Conf {
 
 ejescher ancho alto = Conf {
                 basic = Escher.interpBas
-              , fig = Escher.escher 3 Escher.Fish
+              , fig = Escher.escher 3 Escher.FishHD
               , width = ancho
               , height = alto
               , r = id
@@ -62,7 +63,7 @@ moverCentro ancho alto p = translate (-ancho / 2) (-alto / 2) p
 
 ejCentro ancho alto = Conf {
                 basic = Escher.interpBas
-              , fig = Escher.escher 3 Escher.Fish
+              , fig = Escher.escher 3 Escher.FishHD
               , width = ancho
               , height = alto
               , r = moverCentro ancho alto

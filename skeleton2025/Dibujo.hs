@@ -42,13 +42,11 @@ r360 a = comp (Rotar) 4 a
 (^^^) :: Dibujo a -> Dibujo a -> Dibujo a
 (^^^) a b = Encima a b
 
-
 -- Dadas cuatro dibujos las ubica en los cuatro cuadrantes.
 cuarteto :: Dibujo a -> Dibujo a -> Dibujo a -> Dibujo a -> Dibujo a
 cuarteto a b c d = (.-.) ((///) a b) ((///) c d)
 
 -- Un dibujo repetido con las cuatro rotaciones, superpuestas.
-
 encimar4 :: Dibujo a -> Dibujo a
 encimar4 a = (^^^) (r270 a) $ (^^^) (r180 a) $ (^^^) (r90 a) a
 

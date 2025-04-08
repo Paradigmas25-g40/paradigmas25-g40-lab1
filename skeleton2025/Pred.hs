@@ -27,7 +27,6 @@ anyDib p = foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima
     fJuntar _ _ a1 a2 = a1 || a2
     fEncima a1 a2 = a1 || a2
 
-
 -- Todas las básicas satisfacen el predicado.
 allDib :: Pred a -> Dibujo a -> Bool
 allDib p = foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima
@@ -56,7 +55,6 @@ esRot360 = (>= 4) . foldDib (const 0) fRotar fRotar45 fEspejar fApilar fJuntar f
     fJuntar _ _ x1 x2 = max x1 x2
     fEncima x1 x2 = max x1 x2
 
-
 -- Hay 2 espejados seguidos.
 esFlip2 :: Pred (Dibujo a)
 esFlip2 =  (>= 2) . foldDib (const 0) fRotar fRotar45 fEspejar fApilar fJuntar fEncima
@@ -74,7 +72,6 @@ data Superfluo = RotacionSuperflua | FlipSuperfluo
 
 ---- Chequea si el dibujo tiene una rotacion superflua
 errorRotacion :: Dibujo a -> [Superfluo]
-
 errorRotacion d = snd (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima d) -- Solo nos interesa la lista de errores (snd), no el contador.
   where
     fBasica _ = (0, [])
@@ -85,20 +82,19 @@ errorRotacion d = snd (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar 
           nuevoErr = if n' == 4 then [RotacionSuperflua] else []
       in (n', errs ++ nuevoErr)
 
-    -- Culaquier otro caso el contador se reinicia.
-    fRotar45 _ = (0, [])
-    fEspejar _ = (0, [])
+    -- Cualquier otro caso el contador se reinicia.
+    fRotar45 (_, errs) = (0, errs)
+    fEspejar (_, errs) = (0, errs)
     -- Cuando combinamos dos dibujos, reiniciamos el contador
     -- y juntamos los errores que vengan de cada parte.
     fApilar _ _ (_, e1) (_, e2) = (0, e1 ++ e2)
     fJuntar _ _ (_, e1) (_, e2) = (0, e1 ++ e2)
-    fEncima    (_, e1) (_, e2) = (0, e1 ++ e2)
-
+    fEncima (_, e1) (_, e2) = (0, e1 ++ e2)
 
 -- Chequea si el dibujo tiene un flip superfluo
-errorFlip :: Dibujo a -> [Superfluo]
 -- Se usa foldDib para recorrer el dibujo y analizar cada constructor del lenguaje.
 -- Usamos snd para quedarnos con la lista de errores, el resultado de flodDib es (Bool,[Superfluo])
+errorFlip :: Dibujo a -> [Superfluo]
 errorFlip d = snd (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima d)
   where
     fBasica _ = (0, [])
@@ -109,9 +105,8 @@ errorFlip d = snd (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEnc
 
     fEspejar (n, errs) =
       let n' = n + 1
-          nuevoErr = if n' == 2 then [FlipSuperfluo] else []    -- Si n' es el segundo "Espejar" implica FlipSuperfluo
-          nFinal = if n' == 2 then 0 else n'                    -- Se reinicia el contador si ya habia dos "Espejar".
-      in (nFinal, errs ++ nuevoErr)                             -- Devolvemos el nuevo contador nFinal y los errores acumulados.
+          nuevoErr = if n' == 2 then [FlipSuperfluo] else []
+      in (n', errs ++ nuevoErr)                            
     
     --Combina errores de dos ramas, reinicia contador
     fApilar _ _ (_, e1) (_, e2)= (0, e1 ++ e2)
@@ -121,4 +116,8 @@ errorFlip d = snd (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEnc
 -- Aplica todos los chequeos y acumula todos los errores, y
 -- sólo devuelve la figura si no hubo ningún error.
 checkSuperfluo :: Dibujo a -> Either [Superfluo] (Dibujo a)
-
+checkSuperfluo d = 
+  let check = errorRotacion d ++ errorFlip d
+  in if check == [] 
+    then Right d
+    else Left check
