@@ -74,6 +74,26 @@ data Superfluo = RotacionSuperflua | FlipSuperfluo
 ---- Chequea si el dibujo tiene una rotacion superflua
 errorRotacion :: Dibujo a -> [Superfluo]
 
+errorRotacion d = snd (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima d) -- Solo nos interesa la lista de errores (snd), no el contador.
+  where
+    fBasica _ = (0, [])
+    -- Cada vez que vemos un Rotar, sumamos 1 al contador.
+    -- Si llegamos a 4 rotaciones seguidas, eso es un error.
+    fRotar (n, errs) =
+      let n' = n + 1
+          nuevoErr = if n' == 4 then [RotacionSuperflua] else []
+      in (n', errs ++ nuevoErr)
+
+    -- Culaquier otro caso el contador se reinicia.
+    fRotar45 _ = (0, [])
+    fEspejar _ = (0, [])
+    -- Cuando combinamos dos dibujos, reiniciamos el contador
+    -- y juntamos los errores que vengan de cada parte.
+    fApilar _ _ (_, e1) (_, e2) = (0, e1 ++ e2)
+    fJuntar _ _ (_, e1) (_, e2) = (0, e1 ++ e2)
+    fEncima    (_, e1) (_, e2) = (0, e1 ++ e2)
+
+
 -- Chequea si el dibujo tiene un flip superfluo
 errorFlip :: Dibujo a -> [Superfluo]
 
