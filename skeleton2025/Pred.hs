@@ -72,46 +72,13 @@ data Superfluo = RotacionSuperflua | FlipSuperfluo
 
 ---- Chequea si el dibujo tiene una rotacion superflua
 errorRotacion :: Dibujo a -> [Superfluo]
-errorRotacion d = snd (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima d) -- Solo nos interesa la lista de errores (snd), no el contador.
-  where
-    fBasica _ = (0, [])
-    -- Cada vez que vemos un Rotar, sumamos 1 al contador.
-    -- Si llegamos a 4 rotaciones seguidas, eso es un error.
-    fRotar (n, errs) =
-      let n' = n + 1
-          nuevoErr = if n' == 4 then [RotacionSuperflua] else []
-      in (n', errs ++ nuevoErr)
-
-    -- Cualquier otro caso el contador se reinicia.
-    fRotar45 (_, errs) = (0, errs)
-    fEspejar (_, errs) = (0, errs)
-    -- Cuando combinamos dos dibujos, reiniciamos el contador
-    -- y juntamos los errores que vengan de cada parte.
-    fApilar _ _ (_, e1) (_, e2) = (0, e1 ++ e2)
-    fJuntar _ _ (_, e1) (_, e2) = (0, e1 ++ e2)
-    fEncima (_, e1) (_, e2) = (0, e1 ++ e2)
+errorRotacion d = if esRot360 d then [RotacionSuperflua] else []
 
 -- Chequea si el dibujo tiene un flip superfluo
 -- Se usa foldDib para recorrer el dibujo y analizar cada constructor del lenguaje.
 -- Usamos snd para quedarnos con la lista de errores, el resultado de flodDib es (Bool,[Superfluo])
 errorFlip :: Dibujo a -> [Superfluo]
-errorFlip d = snd (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima d)
-  where
-    fBasica _ = (0, [])
-
-    -- Reinicia el contador de espejados, pero conserva errores
-    fRotar (_, errs) = (0, errs)
-    fRotar45 (_, errs)= (0, errs)
-
-    fEspejar (n, errs) =
-      let n' = n + 1
-          nuevoErr = if n' == 2 then [FlipSuperfluo] else []
-      in (n', errs ++ nuevoErr)                            
-    
-    --Combina errores de dos ramas, reinicia contador
-    fApilar _ _ (_, e1) (_, e2)= (0, e1 ++ e2)
-    fJuntar _ _ (_, e1) (_, e2)= (0, e1 ++ e2)
-    fEncima (_, e1) (_, e2)= (0, e1 ++ e2)
+errorFlip d = if esFlip2 d then [FlipSuperfluo] else []
 
 -- Aplica todos los chequeos y acumula todos los errores, y
 -- sólo devuelve la figura si no hubo ningún error.
