@@ -13,34 +13,34 @@ data Dibujo a = Basica a
 -- Composición n-veces de una función con sí misma.
 comp :: (a -> a) -> Int -> a -> a
 comp f 0 a = a
-comp f x a 
+comp f x a
        | x > 0 = comp f (x-1) (f a)
        |x < 0 = error "No es posible componer negativamente."
 
 -- Rotaciones de múltiplos de 90.
 r180 :: Dibujo a -> Dibujo a
-r180 a = comp (Rotar) 2 a
+r180 = comp Rotar 2
 
 r270 :: Dibujo a -> Dibujo a
-r270 a = comp (Rotar) 3 a
+r270 = comp Rotar 3
 
 r90 :: Dibujo a -> Dibujo a
-r90 a = Rotar a
+r90 = Rotar
 
 r360 :: Dibujo a -> Dibujo a
-r360 a = comp (Rotar) 4 a
+r360 = comp Rotar 4
 
 -- Pone una figura sobre la otra, ambas ocupan el mismo espacio.
 (.-.) :: Dibujo a -> Dibujo a -> Dibujo a
-(.-.) a b = Apilar 1 1 a b
+(.-.) = Apilar 1 1
 
 -- Pone una figura al lado de la otra, ambas ocupan el mismo espacio.
 (///) :: Dibujo a -> Dibujo a -> Dibujo a
-(///) a b = Juntar 1 1 a b
+(///) = Juntar 1 1
 
 -- Superpone una figura con otra.
 (^^^) :: Dibujo a -> Dibujo a -> Dibujo a
-(^^^) a b = Encima a b
+(^^^) = Encima
 
 -- Dadas cuatro dibujos las ubica en los cuatro cuadrantes.
 cuarteto :: Dibujo a -> Dibujo a -> Dibujo a -> Dibujo a -> Dibujo a
@@ -57,7 +57,7 @@ ciclar a = (.-.) ((///) a (Rotar a)) ((///) (r270 a) (r180 a))
 
 -- Transfomar un valor de tipo a como una Basica.
 pureDib :: a -> Dibujo a
-pureDib a = Basica a
+pureDib = Basica
 
 -- map para nuestro lenguaje.
 mapDib :: (a -> b) -> Dibujo a -> Dibujo b
@@ -81,15 +81,15 @@ mapDib2 f (Encima a1 a2) = Encima (mapDib2 f a1) (mapDib2 f a2)
 
 -- Funcion de fold para Dibujos a
 foldDib ::
-       (a -> b) -> 
-       (b -> b) -> 
-       (b -> b) -> 
+       (a -> b) ->
        (b -> b) ->
-       (Float -> Float -> b -> b -> b) -> 
-       (Float -> Float -> b -> b -> b) -> 
+       (b -> b) ->
+       (b -> b) ->
+       (Float -> Float -> b -> b -> b) ->
+       (Float -> Float -> b -> b -> b) ->
        (b -> b -> b) ->
        Dibujo a ->
-       b 
+       b
 foldDib fBasica _ _ _ _ _ _  (Basica a) = fBasica a
 foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima (Rotar a) = fRotar (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima a)
 foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima (Rotar45 a) = fRotar45 (foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncima a)
